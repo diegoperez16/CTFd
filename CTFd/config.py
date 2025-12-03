@@ -99,7 +99,7 @@ class ServerConfig(object):
     SECRET_KEY: str = empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
         or gen_secret_key()
 
-    DATABASE_URL: str = empty_str_cast(config_ini["server"]["DATABASE_URL"])
+    DATABASE_URL: str = os.getenv("DATABASE_URL") or empty_str_cast(config_ini["server"]["DATABASE_URL"])
     if not DATABASE_URL:
         if empty_str_cast(config_ini["server"]["DATABASE_HOST"]) is not None:
             # construct URL from individual variables
@@ -135,7 +135,7 @@ class ServerConfig(object):
             CACHE_REDIS_URL += f":{REDIS_PASSWORD}"
         CACHE_REDIS_URL += f"@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or DATABASE_URL
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     if CACHE_REDIS_URL:
         CACHE_TYPE: str = "redis"
     else:
